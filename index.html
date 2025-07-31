@@ -92,6 +92,19 @@
     #copyButton:active {
       background-color: #082d48;
     }
+
+    #notification {
+      display: none;
+      position: fixed;
+      bottom: 30px;
+      right: 30px;
+      background-color: #0b3c5d;
+      color: white;
+      padding: 10px 20px;
+      border-radius: 6px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.3);
+      font-size: 14px;
+    }
   </style>
 </head>
 <body>
@@ -109,12 +122,12 @@
     <div class="symbol-dropdown">
       <button onclick="toggleSymbolDropdown()">Symbols ▾</button>
       <div class="symbol-options" id="symbolOptions">
-        <div onclick="insertSymbol('•')">•</div>
-        <div onclick="insertSymbol('✔︎')">✔︎</div>
-        <div onclick="insertSymbol('✘')">✘</div>
-        <div onclick="insertSymbol('✎')">✎</div>
-        <div onclick="insertSymbol('➜')">➜</div>
-        <div onclick="insertSymbol('◦')">◦</div>
+        <div onclick="copySymbol('•')">•</div>
+        <div onclick="copySymbol('✔︎')">✔︎</div>
+        <div onclick="copySymbol('✘')">✘</div>
+        <div onclick="copySymbol('✎')">✎</div>
+        <div onclick="copySymbol('➜')">➜</div>
+        <div onclick="copySymbol('◦')">◦</div>
       </div>
     </div>
 
@@ -128,6 +141,8 @@
   <h3>HTML Output:</h3>
   <pre id="output"></pre>
   <button id="copyButton" onclick="copyToClipboard()">Copy for FuseSign</button>
+
+  <div id="notification">Copied to clipboard!</div>
 
   <script>
     function execCmd(command, value = null) {
@@ -168,26 +183,23 @@
       dropdown.style.display = dropdown.style.display === 'block' ? 'none' : 'block';
     }
 
-    function insertSymbol(symbol) {
-      const editor = document.getElementById('editor');
-      editor.focus();
-
-      const selection = window.getSelection();
-      const range = selection.getRangeAt(0);
-      range.deleteContents();
-
-      const node = document.createTextNode(symbol + ' ');
-      range.insertNode(node);
-
-      // Move cursor after inserted symbol
-      range.setStartAfter(node);
-      range.setEndAfter(node);
-      selection.removeAllRanges();
-      selection.addRange(range);
-
-      updateOutput();
+    function copySymbol(symbol) {
+      navigator.clipboard.writeText(symbol).then(() => {
+        showNotification("Copied symbol: " + symbol);
+      }).catch(err => {
+        alert("Copy failed: " + err);
+      });
 
       document.getElementById('symbolOptions').style.display = 'none';
+    }
+
+    function showNotification(message) {
+      const note = document.getElementById('notification');
+      note.textContent = message;
+      note.style.display = 'block';
+      setTimeout(() => {
+        note.style.display = 'none';
+      }, 2000);
     }
 
     // Enable Ctrl+B, Ctrl+I, Ctrl+U inside editor
