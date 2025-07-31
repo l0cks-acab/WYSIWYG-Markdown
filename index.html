@@ -5,28 +5,15 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>FuseSign WYSIWYG Editor</title>
   <style>
-    :root {
-      --primary-blue: #0052cc;
-      --primary-blue-dark: #003d99;
-      --accent-blue: #2684ff;
-      --gray-light: #f4f6f8;
-      --gray-medium: #666666;
-      --white: #ffffff;
-    }
-
     body {
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      font-family: sans-serif;
       margin: 40px auto;
       max-width: 800px;
-      background-color: var(--gray-light);
-      color: var(--gray-medium);
+      color: #2e2e2e;
     }
 
     h1 {
-      color: var(--primary-blue);
-      font-weight: 700;
-      margin-bottom: 20px;
-      user-select: none;
+      color: #0b3c5d;
     }
 
     .toolbar {
@@ -35,62 +22,47 @@
 
     .toolbar button,
     #copyButton {
-      margin-right: 8px;
-      padding: 8px 14px;
-      font-weight: 600;
-      font-size: 14px;
-      border: none;
-      border-radius: 4px;
+      margin-right: 5px;
+      padding: 6px 10px;
       cursor: pointer;
-      background-color: var(--primary-blue);
-      color: var(--white);
-      transition: background-color 0.2s ease;
-      user-select: none;
-      box-shadow: 0 2px 5px rgba(0, 82, 204, 0.2);
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      background-color: #e9f2fb;
+      color: #0b3c5d;
+      font-weight: bold;
     }
 
     .toolbar button:hover,
     #copyButton:hover {
-      background-color: var(--primary-blue-dark);
-      box-shadow: 0 4px 8px rgba(0, 61, 153, 0.3);
-    }
-
-    .toolbar button:focus,
-    #copyButton:focus {
-      outline: 2px solid var(--accent-blue);
-      outline-offset: 2px;
+      background-color: #d0e7fb;
     }
 
     #editor {
-      border: 2px solid var(--primary-blue);
-      padding: 16px;
-      min-height: 180px;
+      border: 1px solid #ccc;
+      padding: 12px;
+      min-height: 150px;
       margin-bottom: 20px;
-      background-color: var(--white);
-      border-radius: 6px;
-      box-shadow: inset 0 1px 4px rgba(0, 0, 0, 0.05);
-      color: #222;
-      font-size: 16px;
-      line-height: 1.5;
+      background-color: #ffffff;
     }
 
     #output {
-      border: 2px solid var(--primary-blue);
-      background: var(--white);
-      padding: 16px;
+      border: 1px solid #0b3c5d;
+      background: #f4f4f4;
+      padding: 12px;
       white-space: pre-wrap;
-      min-height: 120px;
-      font-family: 'Courier New', Courier, monospace;
-      border-radius: 6px;
-      color: #222;
-      font-size: 14px;
-      box-shadow: inset 0 1px 4px rgba(0, 0, 0, 0.05);
+      min-height: 100px;
+      font-family: monospace;
     }
 
-    h3 {
-      color: var(--primary-blue);
-      user-select: none;
-      margin-bottom: 8px;
+    #copyButton {
+      margin-top: 10px;
+      background-color: #0b3c5d;
+      color: white;
+      border: none;
+    }
+
+    #copyButton:active {
+      background-color: #082d48;
     }
   </style>
 </head>
@@ -98,28 +70,21 @@
 
   <h1>FuseSign WYSIWYG Editor</h1>
 
-  <div class="toolbar" role="toolbar" aria-label="Formatting options">
-    <button onclick="execCmd('bold')" aria-label="Bold (Ctrl+B)"><b>B</b></button>
-    <button onclick="execCmd('italic')" aria-label="Italic (Ctrl+I)"><i>I</i></button>
-    <button onclick="execCmd('underline')" aria-label="Underline (Ctrl+U)"><u>U</u></button>
-    <button onclick="execCmd('formatBlock', '<h1>')" aria-label="Heading 1">H1</button>
-    <button onclick="execCmd('formatBlock', '<h2>')" aria-label="Heading 2">H2</button>
-    <button onclick="clearFormatting()" aria-label="Clear formatting">Clear</button>
+  <div class="toolbar">
+    <button onclick="execCmd('bold')"><b>B</b></button>
+    <button onclick="execCmd('italic')"><i>I</i></button>
+    <button onclick="execCmd('underline')"><u>U</u></button>
+    <button onclick="execCmd('formatBlock', '<h1>')">H1</button>
+    <button onclick="execCmd('formatBlock', '<h2>')">H2</button>
+    <button onclick="clearFormatting()">Clear</button>
   </div>
 
-  <div
-    id="editor"
-    contenteditable="true"
-    oninput="updateOutput()"
-    role="textbox"
-    aria-multiline="true"
-    spellcheck="true"
-  >
+  <div id="editor" contenteditable="true" oninput="updateOutput()">
     Type here, highlight parts and format them.
   </div>
 
   <h3>HTML Output:</h3>
-  <pre id="output" aria-live="polite"></pre>
+  <pre id="output"></pre>
   <button id="copyButton" onclick="copyToClipboard()">Copy for FuseSign</button>
 
   <script>
@@ -156,8 +121,11 @@
       });
     }
 
-    // Add keyboard shortcut support
-    document.getElementById('editor').addEventListener('keydown', function (e) {
+    // Enable Ctrl+B, Ctrl+I, Ctrl+U inside editor
+    document.addEventListener('keydown', function (e) {
+      const editor = document.getElementById('editor');
+      if (document.activeElement !== editor) return;
+
       if (e.ctrlKey || e.metaKey) {
         switch (e.key.toLowerCase()) {
           case 'b':
@@ -176,6 +144,7 @@
       }
     });
 
+    // Initial output update
     updateOutput();
   </script>
 
