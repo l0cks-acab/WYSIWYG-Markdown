@@ -50,7 +50,7 @@
     <button onclick="execCmd('formatBlock', '<h2>')">H2</button>
     <button onclick="execCmd('insertUnorderedList')">• List</button>
     <button onclick="execCmd('insertOrderedList')">1. List</button>
-    <button onclick="execCmd('removeFormat')">Clear</button>
+    <button onclick="clearFormatting()">Clear</button>
   </div>
 
   <div id="editor" contenteditable="true" oninput="updateOutput()">
@@ -66,12 +66,26 @@
       updateOutput();
     }
 
+    function clearFormatting() {
+      // Remove inline styles
+      document.execCommand('removeFormat', false, null);
+
+      // Force format block to div (reset heading or block style)
+      document.execCommand('formatBlock', false, 'div');
+
+      // Remove from lists (outdent)
+      document.execCommand('outdent');
+      document.execCommand('outdent');
+
+      updateOutput();
+    }
+
     function updateOutput() {
       const html = document.getElementById('editor').innerHTML;
       document.getElementById('output').textContent = html;
     }
 
-    // Initialize on page load
+    // Initialize on load
     updateOutput();
   </script>
 
