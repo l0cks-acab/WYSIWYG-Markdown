@@ -6,141 +6,136 @@
   <title>FuseSign WYSIWYG Editor</title>
   <style>
     body {
-      font-family: Arial, sans-serif;
-      background: #f8f9fb;
-      margin: 20px;
-      color: #333;
+      font-family: sans-serif;
+      margin: 40px auto;
+      max-width: 800px;
+      color: #2e2e2e;
     }
 
     h1 {
-      color: #004c99;
+      color: #0b3c5d;
     }
 
     .toolbar {
       margin-bottom: 10px;
+      position: relative;
     }
 
     .toolbar button,
-    .dropdown {
-      background: #ffffff;
-      border: 1px solid #d6e0f0;
-      color: #004c99;
-      padding: 6px 10px;
+    #copyButton {
       margin-right: 5px;
+      padding: 6px 10px;
       cursor: pointer;
+      border: 1px solid #ccc;
       border-radius: 4px;
+      background-color: #e9f2fb;
+      color: #0b3c5d;
+      font-weight: bold;
     }
 
     .toolbar button:hover,
-    .dropdown:hover {
-      background: #e6f0ff;
+    #copyButton:hover {
+      background-color: #d0e7fb;
     }
 
-    .dropdown-content {
+    .symbol-dropdown {
+      display: inline-block;
+      position: relative;
+    }
+
+    .symbol-options {
       display: none;
       position: absolute;
-      background-color: #ffffff;
-      border: 1px solid #d6e0f0;
-      padding: 5px;
+      background-color: white;
+      border: 1px solid #ccc;
       z-index: 1;
+      top: 36px;
+      left: 0;
       border-radius: 4px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
     }
 
-    .dropdown-content span {
+    .symbol-options div {
+      padding: 6px 12px;
       cursor: pointer;
-      padding: 4px;
-      display: inline-block;
       font-size: 18px;
     }
 
-    .dropdown-content span:hover {
-      background-color: #f1f1f1;
+    .symbol-options div:hover {
+      background-color: #f0f0f0;
     }
 
     #editor {
-      border: 1px solid #c6d4ec;
-      padding: 10px;
+      border: 1px solid #ccc;
+      padding: 12px;
       min-height: 150px;
-      background: #ffffff;
-      border-radius: 4px;
+      margin-bottom: 20px;
+      background-color: #ffffff;
     }
 
     #output {
+      border: 1px solid #0b3c5d;
+      background: #f4f4f4;
+      padding: 12px;
       white-space: pre-wrap;
-      background: #f1f5fa;
-      border: 1px solid #d6e0f0;
-      padding: 10px;
-      margin-top: 15px;
-      border-radius: 4px;
+      min-height: 100px;
+      font-family: monospace;
     }
 
     #copyButton {
-      background: #004c99;
-      color: #fff;
-      border: none;
-      padding: 8px 12px;
       margin-top: 10px;
-      cursor: pointer;
-      border-radius: 4px;
+      background-color: #0b3c5d;
+      color: white;
+      border: none;
     }
 
-    #copyButton:hover {
-      background: #0066cc;
+    #copyButton:active {
+      background-color: #082d48;
     }
   </style>
 </head>
 <body>
+
   <h1>FuseSign WYSIWYG Editor</h1>
+
   <div class="toolbar">
     <button onclick="execCmd('bold')"><b>B</b></button>
     <button onclick="execCmd('italic')"><i>I</i></button>
     <button onclick="execCmd('underline')"><u>U</u></button>
-    <button onclick="execCmd('formatBlock', 'h1')">H1</button>
-    <button onclick="execCmd('formatBlock', 'h2')">H2</button>
+    <button onclick="execCmd('formatBlock', '<h1>')">H1</button>
+    <button onclick="execCmd('formatBlock', '<h2>')">H2</button>
 
-    <div class="dropdown" onclick="toggleDropdown('symbolDropdown')">Symbols ▼
-      <div id="symbolDropdown" class="dropdown-content">
-        <span onclick="insertText('•')">•</span>
-        <span onclick="insertText('✔︎')">✔︎</span>
-        <span onclick="insertText('✘')">✘</span>
-        <span onclick="insertText('✎')">✎</span>
-        <span onclick="insertText('➜')">➜</span>
-        <span onclick="insertText('◦')">◦</span>
-      </div>
-    </div>
-
-    <div class="dropdown" onclick="toggleDropdown('emojiDropdown')">😊 Emoji ▼
-      <div id="emojiDropdown" class="dropdown-content">
-        <span onclick="insertText('😀')">😀</span>
-        <span onclick="insertText('😂')">😂</span>
-        <span onclick="insertText('😍')">😍</span>
-        <span onclick="insertText('👍')">👍</span>
-        <span onclick="insertText('🎉')">🎉</span>
-        <span onclick="insertText('💡')">💡</span>
+    <!-- Symbol Dropdown -->
+    <div class="symbol-dropdown">
+      <button onclick="toggleSymbolDropdown()">Symbols ▾</button>
+      <div class="symbol-options" id="symbolOptions">
+        <div onclick="insertSymbol('•')">•</div>
+        <div onclick="insertSymbol('✔︎')">✔︎</div>
+        <div onclick="insertSymbol('✘')">✘</div>
+        <div onclick="insertSymbol('✎')">✎</div>
+        <div onclick="insertSymbol('➜')">➜</div>
+        <div onclick="insertSymbol('◦')">◦</div>
       </div>
     </div>
 
     <button onclick="clearFormatting()">Clear</button>
   </div>
 
-  <div id="editor" contenteditable="true" oninput="updateOutput()"></div>
-
-  <button id="copyButton" onclick="copyToClipboard()">Copy for FuseSign</button>
+  <div id="editor" contenteditable="true" oninput="updateOutput()">
+    Type here, highlight parts and format them.
+  </div>
 
   <h3>HTML Output:</h3>
-  <div id="output"></div>
+  <pre id="output"></pre>
+  <button id="copyButton" onclick="copyToClipboard()">Copy for FuseSign</button>
 
   <script>
-    let savedRange = null;
-
     function execCmd(command, value = null) {
-      restoreSelection();
       document.execCommand(command, false, value);
       updateOutput();
     }
 
     function clearFormatting() {
-      restoreSelection();
       document.execCommand('removeFormat', false, null);
       document.execCommand('formatBlock', false, 'div');
       document.execCommand('outdent');
@@ -168,55 +163,34 @@
       });
     }
 
-    function toggleDropdown(id) {
-      document.querySelectorAll('.dropdown-content').forEach(el => {
-        if (el.id !== id) el.style.display = 'none';
-      });
-
-      const menu = document.getElementById(id);
-      menu.style.display = menu.style.display === 'block' ? 'none' : 'block';
+    function toggleSymbolDropdown() {
+      const dropdown = document.getElementById('symbolOptions');
+      dropdown.style.display = dropdown.style.display === 'block' ? 'none' : 'block';
     }
 
-    function insertText(text) {
-      restoreSelection();
+    function insertSymbol(symbol) {
+      const editor = document.getElementById('editor');
+      editor.focus();
 
       const selection = window.getSelection();
-      if (!selection.rangeCount) return;
-
       const range = selection.getRangeAt(0);
       range.deleteContents();
-      const node = document.createTextNode(text + ' ');
+
+      const node = document.createTextNode(symbol + ' ');
       range.insertNode(node);
 
+      // Move cursor after inserted symbol
       range.setStartAfter(node);
       range.setEndAfter(node);
       selection.removeAllRanges();
       selection.addRange(range);
 
       updateOutput();
-      document.querySelectorAll('.dropdown-content').forEach(el => el.style.display = 'none');
+
+      document.getElementById('symbolOptions').style.display = 'none';
     }
 
-    function saveSelection() {
-      const sel = window.getSelection();
-      if (sel.rangeCount > 0) {
-        savedRange = sel.getRangeAt(0);
-      }
-    }
-
-    function restoreSelection() {
-      const sel = window.getSelection();
-      sel.removeAllRanges();
-      if (savedRange) {
-        sel.addRange(savedRange);
-      }
-    }
-
-    document.getElementById('editor').addEventListener('keyup', saveSelection);
-    document.getElementById('editor').addEventListener('mouseup', saveSelection);
-    document.getElementById('editor').addEventListener('blur', saveSelection);
-    document.getElementById('editor').addEventListener('focus', saveSelection);
-
+    // Enable Ctrl+B, Ctrl+I, Ctrl+U inside editor
     document.addEventListener('keydown', function (e) {
       const editor = document.getElementById('editor');
       if (document.activeElement !== editor) return;
@@ -239,13 +213,16 @@
       }
     });
 
+    // Click outside to close symbol dropdown
     document.addEventListener('click', function (e) {
-      if (!e.target.closest('.dropdown')) {
-        document.querySelectorAll('.dropdown-content').forEach(el => el.style.display = 'none');
+      const dropdown = document.getElementById('symbolOptions');
+      if (!e.target.closest('.symbol-dropdown')) {
+        dropdown.style.display = 'none';
       }
     });
 
     updateOutput();
   </script>
+
 </body>
 </html>
