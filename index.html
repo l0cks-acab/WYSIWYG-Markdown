@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>WYSIWYG Editor (Multi-format)</title>
+  <title>FuseSign WYSIWYG Editor</title>
   <style>
     body {
       font-family: sans-serif;
@@ -62,16 +62,16 @@
     <button onclick="execCmd('formatBlock', '<h2>')">H2</button>
     <button onclick="execCmd('insertUnorderedList')">• List</button>
     <button onclick="execCmd('insertOrderedList')">1. List</button>
-    <button onclick="clearFormatting()">Clear</button>
+    <button onclick="clearFormatting()">Clear Formatting</button>
   </div>
 
   <div id="editor" contenteditable="true" oninput="updateOutput()">
     Type here, highlight parts and format them.
   </div>
 
-  <h3>HTML Output:</h3>
+  <h3>Output:</h3>
   <pre id="output"></pre>
-  <button id="copyButton" onclick="copyToClipboard()">Copy HTML</button>
+  <button id="copyButton" onclick="copyToClipboard()">Copy for FuseSign</button>
 
   <script>
     function execCmd(command, value = null) {
@@ -100,7 +100,7 @@
         const button = document.getElementById('copyButton');
         button.textContent = "Copied!";
         setTimeout(() => {
-          button.textContent = "Copy HTML";
+          button.textContent = "Copy for FuseSign";
         }, 1500);
       }).catch(err => {
         alert("Failed to copy: " + err);
