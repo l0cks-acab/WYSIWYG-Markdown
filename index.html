@@ -6,158 +6,141 @@
   <title>FuseSign WYSIWYG Editor</title>
   <style>
     body {
-      font-family: sans-serif;
-      margin: 40px auto;
-      max-width: 800px;
-      color: #2e2e2e;
+      font-family: Arial, sans-serif;
+      background: #f8f9fb;
+      margin: 20px;
+      color: #333;
     }
 
     h1 {
-      color: #0b3c5d;
+      color: #004c99;
     }
 
     .toolbar {
       margin-bottom: 10px;
-      position: relative;
-      display: flex;
-      flex-wrap: wrap;
-      gap: 5px;
     }
 
     .toolbar button,
-    #copyButton {
+    .dropdown {
+      background: #ffffff;
+      border: 1px solid #d6e0f0;
+      color: #004c99;
       padding: 6px 10px;
+      margin-right: 5px;
       cursor: pointer;
-      border: 1px solid #ccc;
       border-radius: 4px;
-      background-color: #e9f2fb;
-      color: #0b3c5d;
-      font-weight: bold;
     }
 
     .toolbar button:hover,
-    #copyButton:hover {
-      background-color: #d0e7fb;
-    }
-
-    .dropdown {
-      position: relative;
-      display: inline-block;
+    .dropdown:hover {
+      background: #e6f0ff;
     }
 
     .dropdown-content {
       display: none;
       position: absolute;
-      background-color: white;
-      border: 1px solid #ccc;
+      background-color: #ffffff;
+      border: 1px solid #d6e0f0;
+      padding: 5px;
       z-index: 1;
-      top: 36px;
-      left: 0;
       border-radius: 4px;
-      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
-      padding: 6px;
-      min-width: 140px;
     }
 
-    .dropdown-content div {
-      padding: 6px;
+    .dropdown-content span {
       cursor: pointer;
+      padding: 4px;
+      display: inline-block;
       font-size: 18px;
-      text-align: center;
     }
 
-    .dropdown-content div:hover {
-      background-color: #f0f0f0;
+    .dropdown-content span:hover {
+      background-color: #f1f1f1;
     }
 
     #editor {
-      border: 1px solid #ccc;
-      padding: 12px;
+      border: 1px solid #c6d4ec;
+      padding: 10px;
       min-height: 150px;
-      margin-bottom: 20px;
-      background-color: #ffffff;
+      background: #ffffff;
+      border-radius: 4px;
     }
 
     #output {
-      border: 1px solid #0b3c5d;
-      background: #f4f4f4;
-      padding: 12px;
       white-space: pre-wrap;
-      min-height: 100px;
-      font-family: monospace;
+      background: #f1f5fa;
+      border: 1px solid #d6e0f0;
+      padding: 10px;
+      margin-top: 15px;
+      border-radius: 4px;
     }
 
     #copyButton {
-      margin-top: 10px;
-      background-color: #0b3c5d;
-      color: white;
+      background: #004c99;
+      color: #fff;
       border: none;
+      padding: 8px 12px;
+      margin-top: 10px;
+      cursor: pointer;
+      border-radius: 4px;
     }
 
-    #copyButton:active {
-      background-color: #082d48;
+    #copyButton:hover {
+      background: #0066cc;
     }
   </style>
 </head>
 <body>
-
   <h1>FuseSign WYSIWYG Editor</h1>
-
   <div class="toolbar">
     <button onclick="execCmd('bold')"><b>B</b></button>
     <button onclick="execCmd('italic')"><i>I</i></button>
     <button onclick="execCmd('underline')"><u>U</u></button>
-    <button onclick="execCmd('formatBlock', '<h1>')">H1</button>
-    <button onclick="execCmd('formatBlock', '<h2>')">H2</button>
+    <button onclick="execCmd('formatBlock', 'h1')">H1</button>
+    <button onclick="execCmd('formatBlock', 'h2')">H2</button>
 
-    <!-- Symbols Dropdown -->
-    <div class="dropdown">
-      <button onclick="toggleDropdown('symbolOptions')">Symbols ▾</button>
-      <div class="dropdown-content" id="symbolOptions">
-        <div onclick="insertText('•')">•</div>
-        <div onclick="insertText('✔︎')">✔︎</div>
-        <div onclick="insertText('✘')">✘</div>
-        <div onclick="insertText('✎')">✎</div>
-        <div onclick="insertText('➜')">➜</div>
-        <div onclick="insertText('◦')">◦</div>
+    <div class="dropdown" onclick="toggleDropdown('symbolDropdown')">Symbols ▼
+      <div id="symbolDropdown" class="dropdown-content">
+        <span onclick="insertText('•')">•</span>
+        <span onclick="insertText('✔︎')">✔︎</span>
+        <span onclick="insertText('✘')">✘</span>
+        <span onclick="insertText('✎')">✎</span>
+        <span onclick="insertText('➜')">➜</span>
+        <span onclick="insertText('◦')">◦</span>
       </div>
     </div>
 
-    <!-- Emojis Dropdown -->
-    <div class="dropdown">
-      <button onclick="toggleDropdown('emojiOptions')">😊 Emojis ▾</button>
-      <div class="dropdown-content" id="emojiOptions">
-        <div onclick="insertText('😀')">😀</div>
-        <div onclick="insertText('😍')">😍</div>
-        <div onclick="insertText('😂')">😂</div>
-        <div onclick="insertText('😎')">😎</div>
-        <div onclick="insertText('🤔')">🤔</div>
-        <div onclick="insertText('👍')">👍</div>
-        <div onclick="insertText('🎉')">🎉</div>
-        <div onclick="insertText('💡')">💡</div>
-        <div onclick="insertText('❤️')">❤️</div>
-        <div onclick="insertText('🧠')">🧠</div>
+    <div class="dropdown" onclick="toggleDropdown('emojiDropdown')">😊 Emoji ▼
+      <div id="emojiDropdown" class="dropdown-content">
+        <span onclick="insertText('😀')">😀</span>
+        <span onclick="insertText('😂')">😂</span>
+        <span onclick="insertText('😍')">😍</span>
+        <span onclick="insertText('👍')">👍</span>
+        <span onclick="insertText('🎉')">🎉</span>
+        <span onclick="insertText('💡')">💡</span>
       </div>
     </div>
 
     <button onclick="clearFormatting()">Clear</button>
   </div>
 
-  <div id="editor" contenteditable="true" oninput="updateOutput()">
-    Type here, highlight parts and format them.
-  </div>
+  <div id="editor" contenteditable="true" oninput="updateOutput()"></div>
 
-  <h3>HTML Output:</h3>
-  <pre id="output"></pre>
   <button id="copyButton" onclick="copyToClipboard()">Copy for FuseSign</button>
 
+  <h3>HTML Output:</h3>
+  <div id="output"></div>
+
   <script>
+    let savedRange = null;
+
     function execCmd(command, value = null) {
+      restoreSelection();
       document.execCommand(command, false, value);
       updateOutput();
     }
 
     function clearFormatting() {
+      restoreSelection();
       document.execCommand('removeFormat', false, null);
       document.execCommand('formatBlock', false, 'div');
       document.execCommand('outdent');
@@ -195,13 +178,13 @@
     }
 
     function insertText(text) {
-      const editor = document.getElementById('editor');
-      editor.focus();
+      restoreSelection();
 
       const selection = window.getSelection();
+      if (!selection.rangeCount) return;
+
       const range = selection.getRangeAt(0);
       range.deleteContents();
-
       const node = document.createTextNode(text + ' ');
       range.insertNode(node);
 
@@ -213,6 +196,26 @@
       updateOutput();
       document.querySelectorAll('.dropdown-content').forEach(el => el.style.display = 'none');
     }
+
+    function saveSelection() {
+      const sel = window.getSelection();
+      if (sel.rangeCount > 0) {
+        savedRange = sel.getRangeAt(0);
+      }
+    }
+
+    function restoreSelection() {
+      const sel = window.getSelection();
+      sel.removeAllRanges();
+      if (savedRange) {
+        sel.addRange(savedRange);
+      }
+    }
+
+    document.getElementById('editor').addEventListener('keyup', saveSelection);
+    document.getElementById('editor').addEventListener('mouseup', saveSelection);
+    document.getElementById('editor').addEventListener('blur', saveSelection);
+    document.getElementById('editor').addEventListener('focus', saveSelection);
 
     document.addEventListener('keydown', function (e) {
       const editor = document.getElementById('editor');
@@ -244,6 +247,5 @@
 
     updateOutput();
   </script>
-
 </body>
 </html>
