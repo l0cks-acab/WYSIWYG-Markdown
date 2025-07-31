@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>WYSIWYG Editor</title>
+  <style>
+    body {
+      font-family: sans-serif;
+      margin: 40px;
+      max-width: 800px;
+    }
+
+    .toolbar {
+      margin-bottom: 10px;
+    }
+
+    .toolbar button {
+      margin-right: 5px;
+      padding: 6px 10px;
+      cursor: pointer;
+    }
+
+    #editor {
+      border: 1px solid #ccc;
+      padding: 12px;
+      min-height: 150px;
+      margin-bottom: 20px;
+    }
+
+    #output {
+      border: 1px solid #333;
+      background: #f4f4f4;
+      padding: 12px;
+      white-space: pre-wrap;
+      min-height: 100px;
+      font-family: monospace;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>Static WYSIWYG HTML Editor</h1>
+
+  <div class="toolbar">
+    <button onclick="execCmd('bold')"><b>B</b></button>
+    <button onclick="execCmd('italic')"><i>I</i></button>
+    <button onclick="execCmd('underline')"><u>U</u></button>
+    <button onclick="execCmd('formatBlock', '<h1>')">H1</button>
+    <button onclick="execCmd('formatBlock', '<h2>')">H2</button>
+    <button onclick="execCmd('insertUnorderedList')">• List</button>
+    <button onclick="execCmd('insertOrderedList')">1. List</button>
+    <button onclick="execCmd('removeFormat')">Clear</button>
+  </div>
+
+  <div id="editor" contenteditable="true" oninput="updateOutput()">
+    Type something here...
+  </div>
+
+  <h3>HTML Output:</h3>
+  <pre id="output">&lt;p&gt;Type something here...&lt;/p&gt;</pre>
+
+  <script>
+    function execCmd(command, value = null) {
+      document.execCommand(command, false, value);
+      updateOutput();
+    }
+
+    function updateOutput() {
+      const html = document.getElementById('editor').innerHTML;
+      document.getElementById('output').textContent = html;
+    }
+
+    // Initial update
+    updateOutput();
+  </script>
+
+</body>
+</html>
