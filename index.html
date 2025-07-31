@@ -3,11 +3,11 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>WYSIWYG Editor</title>
+  <title>WYSIWYG Editor (Multi-format)</title>
   <style>
     body {
       font-family: sans-serif;
-      margin: 40px;
+      margin: 40px auto;
       max-width: 800px;
     }
 
@@ -54,11 +54,11 @@
   </div>
 
   <div id="editor" contenteditable="true" oninput="updateOutput()">
-    Type something here...
+    Type here, highlight parts and format them.
   </div>
 
   <h3>HTML Output:</h3>
-  <pre id="output">&lt;p&gt;Type something here...&lt;/p&gt;</pre>
+  <pre id="output"></pre>
 
   <script>
     function execCmd(command, value = null) {
@@ -71,7 +71,7 @@
       document.getElementById('output').textContent = html;
     }
 
-    // Initial update
+    // Initialize on page load
     updateOutput();
   </script>
 
