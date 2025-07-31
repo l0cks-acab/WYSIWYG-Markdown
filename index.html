@@ -5,7 +5,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>FuseSign WYSIWYG Editor</title>
   <style>
-    /* FuseSign Colors */
     :root {
       --primary-blue: #0052cc;
       --primary-blue-dark: #003d99;
@@ -157,7 +156,26 @@
       });
     }
 
-    // Initialize
+    // Add keyboard shortcut support
+    document.getElementById('editor').addEventListener('keydown', function (e) {
+      if (e.ctrlKey || e.metaKey) {
+        switch (e.key.toLowerCase()) {
+          case 'b':
+            e.preventDefault();
+            execCmd('bold');
+            break;
+          case 'i':
+            e.preventDefault();
+            execCmd('italic');
+            break;
+          case 'u':
+            e.preventDefault();
+            execCmd('underline');
+            break;
+        }
+      }
+    });
+
     updateOutput();
   </script>
 
