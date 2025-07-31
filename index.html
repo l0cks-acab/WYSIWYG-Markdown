@@ -15,7 +15,8 @@
       margin-bottom: 10px;
     }
 
-    .toolbar button {
+    .toolbar button,
+    #copyButton {
       margin-right: 5px;
       padding: 6px 10px;
       cursor: pointer;
@@ -35,6 +36,17 @@
       white-space: pre-wrap;
       min-height: 100px;
       font-family: monospace;
+    }
+
+    #copyButton {
+      margin-top: 10px;
+      background-color: #007bff;
+      color: white;
+      border: none;
+    }
+
+    #copyButton:active {
+      background-color: #0056b3;
     }
   </style>
 </head>
@@ -59,6 +71,7 @@
 
   <h3>HTML Output:</h3>
   <pre id="output"></pre>
+  <button id="copyButton" onclick="copyToClipboard()">Copy HTML</button>
 
   <script>
     function execCmd(command, value = null) {
@@ -67,16 +80,10 @@
     }
 
     function clearFormatting() {
-      // Remove inline styles
       document.execCommand('removeFormat', false, null);
-
-      // Force format block to div (reset heading or block style)
       document.execCommand('formatBlock', false, 'div');
-
-      // Remove from lists (outdent)
       document.execCommand('outdent');
       document.execCommand('outdent');
-
       updateOutput();
     }
 
@@ -85,7 +92,22 @@
       document.getElementById('output').textContent = html;
     }
 
-    // Initialize on load
+    function copyToClipboard() {
+      const output = document.getElementById('output');
+      const text = output.textContent;
+
+      navigator.clipboard.writeText(text).then(() => {
+        const button = document.getElementById('copyButton');
+        button.textContent = "Copied!";
+        setTimeout(() => {
+          button.textContent = "Copy HTML";
+        }, 1500);
+      }).catch(err => {
+        alert("Failed to copy: " + err);
+      });
+    }
+
+    // Initialize
     updateOutput();
   </script>
 
