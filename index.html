@@ -19,11 +19,13 @@
     .toolbar {
       margin-bottom: 10px;
       position: relative;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 5px;
     }
 
     .toolbar button,
     #copyButton {
-      margin-right: 5px;
       padding: 6px 10px;
       cursor: pointer;
       border: 1px solid #ccc;
@@ -38,12 +40,12 @@
       background-color: #d0e7fb;
     }
 
-    .symbol-dropdown {
-      display: inline-block;
+    .dropdown {
       position: relative;
+      display: inline-block;
     }
 
-    .symbol-options {
+    .dropdown-content {
       display: none;
       position: absolute;
       background-color: white;
@@ -53,15 +55,18 @@
       left: 0;
       border-radius: 4px;
       box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+      padding: 6px;
+      min-width: 140px;
     }
 
-    .symbol-options div {
-      padding: 6px 12px;
+    .dropdown-content div {
+      padding: 6px;
       cursor: pointer;
       font-size: 18px;
+      text-align: center;
     }
 
-    .symbol-options div:hover {
+    .dropdown-content div:hover {
       background-color: #f0f0f0;
     }
 
@@ -105,16 +110,33 @@
     <button onclick="execCmd('formatBlock', '<h1>')">H1</button>
     <button onclick="execCmd('formatBlock', '<h2>')">H2</button>
 
-    <!-- Symbol Dropdown -->
-    <div class="symbol-dropdown">
-      <button onclick="toggleSymbolDropdown()">Symbols ▾</button>
-      <div class="symbol-options" id="symbolOptions">
-        <div onclick="insertSymbol('•')">•</div>
-        <div onclick="insertSymbol('✔︎')">✔︎</div>
-        <div onclick="insertSymbol('✘')">✘</div>
-        <div onclick="insertSymbol('✎')">✎</div>
-        <div onclick="insertSymbol('➜')">➜</div>
-        <div onclick="insertSymbol('◦')">◦</div>
+    <!-- Symbols Dropdown -->
+    <div class="dropdown">
+      <button onclick="toggleDropdown('symbolOptions')">Symbols ▾</button>
+      <div class="dropdown-content" id="symbolOptions">
+        <div onclick="insertText('•')">•</div>
+        <div onclick="insertText('✔︎')">✔︎</div>
+        <div onclick="insertText('✘')">✘</div>
+        <div onclick="insertText('✎')">✎</div>
+        <div onclick="insertText('➜')">➜</div>
+        <div onclick="insertText('◦')">◦</div>
+      </div>
+    </div>
+
+    <!-- Emojis Dropdown -->
+    <div class="dropdown">
+      <button onclick="toggleDropdown('emojiOptions')">😊 Emojis ▾</button>
+      <div class="dropdown-content" id="emojiOptions">
+        <div onclick="insertText('😀')">😀</div>
+        <div onclick="insertText('😍')">😍</div>
+        <div onclick="insertText('😂')">😂</div>
+        <div onclick="insertText('😎')">😎</div>
+        <div onclick="insertText('🤔')">🤔</div>
+        <div onclick="insertText('👍')">👍</div>
+        <div onclick="insertText('🎉')">🎉</div>
+        <div onclick="insertText('💡')">💡</div>
+        <div onclick="insertText('❤️')">❤️</div>
+        <div onclick="insertText('🧠')">🧠</div>
       </div>
     </div>
 
@@ -163,12 +185,16 @@
       });
     }
 
-    function toggleSymbolDropdown() {
-      const dropdown = document.getElementById('symbolOptions');
-      dropdown.style.display = dropdown.style.display === 'block' ? 'none' : 'block';
+    function toggleDropdown(id) {
+      document.querySelectorAll('.dropdown-content').forEach(el => {
+        if (el.id !== id) el.style.display = 'none';
+      });
+
+      const menu = document.getElementById(id);
+      menu.style.display = menu.style.display === 'block' ? 'none' : 'block';
     }
 
-    function insertSymbol(symbol) {
+    function insertText(text) {
       const editor = document.getElementById('editor');
       editor.focus();
 
@@ -176,21 +202,18 @@
       const range = selection.getRangeAt(0);
       range.deleteContents();
 
-      const node = document.createTextNode(symbol + ' ');
+      const node = document.createTextNode(text + ' ');
       range.insertNode(node);
 
-      // Move cursor after inserted symbol
       range.setStartAfter(node);
       range.setEndAfter(node);
       selection.removeAllRanges();
       selection.addRange(range);
 
       updateOutput();
-
-      document.getElementById('symbolOptions').style.display = 'none';
+      document.querySelectorAll('.dropdown-content').forEach(el => el.style.display = 'none');
     }
 
-    // Enable Ctrl+B, Ctrl+I, Ctrl+U inside editor
     document.addEventListener('keydown', function (e) {
       const editor = document.getElementById('editor');
       if (document.activeElement !== editor) return;
@@ -213,11 +236,9 @@
       }
     });
 
-    // Click outside to close symbol dropdown
     document.addEventListener('click', function (e) {
-      const dropdown = document.getElementById('symbolOptions');
-      if (!e.target.closest('.symbol-dropdown')) {
-        dropdown.style.display = 'none';
+      if (!e.target.closest('.dropdown')) {
+        document.querySelectorAll('.dropdown-content').forEach(el => el.style.display = 'none');
       }
     });
 
